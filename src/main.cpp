@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "ast/interval/IntervalNode.h"
+
 int main() {
     // TODO: ast
     // -- binary, unary, atoms
@@ -17,6 +19,7 @@ int main() {
     // -- For now, simple approach -- test cases in main.
     //      -- Can rely on prior knowledge to implement test suite for larger projects.
 
-    std::cout << "Work in progress!" << std::endl;
+    auto interval = IntervalNode(0, 2);
+    std::cout << "Min: " << interval.min() << " Max: " << interval.max() << std::endl;
     return 0;
 }
