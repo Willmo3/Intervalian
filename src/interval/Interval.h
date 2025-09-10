@@ -2,16 +2,16 @@
 // Created by will on 9/10/25.
 //
 
-#ifndef INTERVALIAN_INTERVALNODE_H
-#define INTERVALIAN_INTERVALNODE_H
+#ifndef INTERVALIAN_INTERVAL_H
+#define INTERVALIAN_INTERVAL_H
 
-class IntervalNode {
+class Interval {
 public:
     /*
      * Constructors
      */
-    IntervalNode(double min, double max);
-    ~IntervalNode();
+    Interval(double min, double max);
+    ~Interval();
 
     /*
      * Accessors
@@ -24,4 +24,4 @@ private:
     double _max;
 };
 
-#endif //INTERVALIAN_INTERVALNODE_H
+#endif //INTERVALIAN_INTERVAL_H

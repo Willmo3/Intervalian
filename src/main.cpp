@@ -1,8 +1,12 @@
 #include <iostream>
 
-#include "ast/interval/IntervalNode.h"
+#include "ast/atoms/IntervalNode.h"
+#include "ast/binaryops/BinaryOpNode.h"
+#include "interval/Interval.h"
+#include "visitor/EvaluationVisitor.h"
 
 int main() {
+    auto visitor = EvaluationVisitor();
     // TODO: ast
     // -- binary, unary, atoms
     // -- only atom type: interval
@@ -19,7 +23,13 @@ int main() {
     // -- For now, simple approach -- test cases in main.
     //      -- Can rely on prior knowledge to implement test suite for larger projects.
 
-    auto interval = IntervalNode(0, 2);
-    std::cout << "Min: " << interval.min() << " Max: " << interval.max() << std::endl;
+    auto left = IntervalNode(Interval(0, 2));
+    auto right = IntervalNode(Interval(1, 2));
+    auto add = BinaryOpNode(BinaryOpNode::ADD, &left, &right);
+
+    add.accept(&visitor);
+
+    std::cout << add.value().min() << std::endl;
+    std::cout << add.value().max() << std::endl;
     return 0;
 }
