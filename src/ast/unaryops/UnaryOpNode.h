@@ -10,6 +10,7 @@ class UnaryOpNode: public AstNode {
 public:
     enum UnaryOpType {
         POW,
+        TANH,
     };
 
     /*

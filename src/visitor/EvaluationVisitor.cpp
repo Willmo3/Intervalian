@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <functional>
 #include <iostream>
+#include <math.h>
 #include <ostream>
 
 #include "../ast/binaryops/BinaryOpNode.h"
@@ -96,6 +97,11 @@ void EvaluationVisitor::visit(UnaryOpNode *node) {
     switch (node->optype()) {
         case UnaryOpNode::POW: {
             node->_value = pow(node->_child->value(), dynamic_cast<PowNode *>(node)->pow());
+            break;
+        }
+        case UnaryOpNode::TANH: {
+            // NOTE: tanh is monotonic, so can simply apply to left, right.
+            node->_value = Interval(tanh(node->_child->value().min()), tanh(node->_child->value().max()));
             break;
         }
         default: {

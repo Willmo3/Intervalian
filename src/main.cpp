@@ -62,24 +62,19 @@ void test_pow() {
     std::cout << exp.value().to_string() << std::endl;
 }
 
+void test_tanh() {
+    auto visitor = EvaluationVisitor();
+
+    auto base = IntervalNode(Interval(-1, 4));
+    auto tanh = UnaryOpNode(UnaryOpNode::TANH, &base);
+
+    tanh.accept(&visitor);
+    std::cout << tanh.value().to_string() << std::endl;
+}
+
 int main() {
     auto visitor = EvaluationVisitor();
-    // TODO: ast
-    // -- binary, unary, atoms
-    // -- only atom type: interval
-    //      -- simpler to implement -- may not need atom abstract class.
-    // -- standard binary operations
-    //      -- Key concern: specialize for intervals. Implement addition first.
-    // -- Unary ops
-    //      -- What does tanh look like for an interval?
-    //          -- Insight: if the upper bound is now lower, it must be made lower.
-    // -- Power: dangerous.
-    //      -- TODO: edge cases in exponentiating intervals.
 
-    // TODO: execution
-    // -- For now, simple approach -- test cases in main.
-    //      -- Can rely on prior knowledge to implement test suite for larger projects.
-
-    test_pow();
+    test_tanh();
     return 0;
 }
