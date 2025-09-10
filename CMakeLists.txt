@@ -17,4 +17,6 @@ add_executable(intervalian src/main.cpp
         src/visitor/EvaluationVisitor.cpp
         src/visitor/EvaluationVisitor.h
         src/ast/AstNode.cpp
+        src/ast/unaryops/PowNode.cpp
+        src/ast/unaryops/PowNode.h
 )

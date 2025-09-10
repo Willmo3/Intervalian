@@ -5,12 +5,14 @@
 #include "EvaluationVisitor.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <iostream>
 #include <ostream>
 
 #include "../ast/binaryops/BinaryOpNode.h"
 #include "../ast/unaryops/UnaryOpNode.h"
+#include "../ast/unaryops/PowNode.h"
 
 /*
  * Atomic computations
@@ -23,6 +25,33 @@ double divide (double a, double b) {
         return 0;
     }
     return a / b;
+}
+
+/*
+ * Compound computations.
+ */
+/**
+ * Take the power of an interval by repeatedly multiplying it by other intervals.
+ *
+ * @param base Interval to exponentiate.
+ * @param exp Power to raise the interval to.
+ * @return A new interval, multiplied by itself n times.
+ */
+Interval pow(Interval base, uint32_t exp) {
+    Interval accumulator = base;
+    for (auto i = 0; i < exp; i++) {
+        double values[4];
+        values[0] = accumulator.min() * base.min();
+        values[1] = accumulator.min() * base.max();
+        values[2] = accumulator.max() * base.min();
+        values[3] = accumulator.max() * base.max();
+
+        double min = *std::ranges::min_element(values, values + 4);
+        double max = *std::ranges::max_element(values, values + 4);
+
+        accumulator = Interval(min, max);
+    }
+    return accumulator;
 }
 
 /*
@@ -65,6 +94,10 @@ void EvaluationVisitor::visit(BinaryOpNode *node) {
 
 void EvaluationVisitor::visit(UnaryOpNode *node) {
     switch (node->optype()) {
+        case UnaryOpNode::POW: {
+            node->_value = pow(node->_child->value(), dynamic_cast<PowNode *>(node)->pow());
+            break;
+        }
         default: {
             std::cerr << "Not yet implemented." << std::endl;
             break;

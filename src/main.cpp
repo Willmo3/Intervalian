@@ -2,6 +2,8 @@
 
 #include "ast/atoms/IntervalNode.h"
 #include "ast/binaryops/BinaryOpNode.h"
+#include "ast/unaryops/PowNode.h"
+#include "ast/unaryops/UnaryOpNode.h"
 #include "interval/Interval.h"
 #include "visitor/EvaluationVisitor.h"
 
@@ -49,6 +51,17 @@ void test_div() {
     std::cout << div.value().to_string() << std::endl;
 }
 
+void test_pow() {
+    auto visitor = EvaluationVisitor();
+
+    auto base = IntervalNode(Interval(-1, 4));
+    auto exp = PowNode(&base, 4);
+
+    exp.accept(&visitor);
+    // Expect: -256, 1024
+    std::cout << exp.value().to_string() << std::endl;
+}
+
 int main() {
     auto visitor = EvaluationVisitor();
     // TODO: ast
@@ -67,6 +80,6 @@ int main() {
     // -- For now, simple approach -- test cases in main.
     //      -- Can rely on prior knowledge to implement test suite for larger projects.
 
-    test_sub();
+    test_pow();
     return 0;
 }
