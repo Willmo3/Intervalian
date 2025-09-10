@@ -27,3 +27,6 @@ double Interval::min() const {
 double Interval::max() const {
     return _max;
 }
+std::string Interval::to_string() const {
+    return std::to_string(_min) + " " + std::to_string(_max);
+}

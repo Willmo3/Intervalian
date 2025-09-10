@@ -29,7 +29,6 @@ int main() {
 
     add.accept(&visitor);
 
-    std::cout << add.value().min() << std::endl;
-    std::cout << add.value().max() << std::endl;
+    std::cout << add.value().to_string() << std::endl;
     return 0;
 }

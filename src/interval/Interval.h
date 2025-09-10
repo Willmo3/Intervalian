@@ -4,6 +4,7 @@
 
 #ifndef INTERVALIAN_INTERVAL_H
 #define INTERVALIAN_INTERVAL_H
+#include <string>
 
 class Interval {
 public:
@@ -12,12 +13,13 @@ public:
      */
     Interval(double min, double max);
     ~Interval();
-
     /*
      * Accessors
      */
     double min() const;
     double max() const;
+
+    std::string to_string() const;
 
 private:
     double _min;
