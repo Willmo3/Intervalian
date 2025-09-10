@@ -16,6 +16,17 @@ void test_add() {
     std::cout << add.value().to_string() << std::endl;
 }
 
+void test_sub() {
+    auto visitor = EvaluationVisitor();
+
+    auto left = IntervalNode(Interval(0, 2));
+    auto right = IntervalNode(Interval(-1, 2));
+    auto sub = BinaryOpNode(BinaryOpNode::SUB, &left, &right);
+
+    sub.accept(&visitor);
+    std::cout << sub.value().to_string() << std::endl;
+}
+
 void test_mul() {
     auto visitor = EvaluationVisitor();
 
@@ -56,6 +67,6 @@ int main() {
     // -- For now, simple approach -- test cases in main.
     //      -- Can rely on prior knowledge to implement test suite for larger projects.
 
-    test_div();
+    test_sub();
     return 0;
 }

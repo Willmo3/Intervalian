@@ -41,6 +41,7 @@ void EvaluationVisitor::visit(BinaryOpNode *node) {
 
     switch (node->optype()) {
         case BinaryOpNode::ADD: operation = add; break;
+        case BinaryOpNode::SUB: operation = sub; break;
         case BinaryOpNode::MULT: operation = mul; break;
         case BinaryOpNode::DIV: operation = divide; break;
         default: {

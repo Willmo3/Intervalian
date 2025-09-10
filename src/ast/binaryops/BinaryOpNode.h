@@ -10,6 +10,7 @@ class BinaryOpNode: public AstNode {
 public:
     enum BinaryOpType {
         ADD = 0,
+        SUB,
         MULT,
         DIV,
     };
