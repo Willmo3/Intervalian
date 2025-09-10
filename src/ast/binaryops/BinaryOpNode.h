@@ -11,6 +11,7 @@ public:
     enum BinaryOpType {
         ADD = 0,
         MULT,
+        DIV,
     };
 
     /*

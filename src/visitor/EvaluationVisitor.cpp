@@ -18,7 +18,7 @@
 double add(double a, double b) { return a + b; }
 double sub(double a, double b) { return a - b; }
 double mul(double a, double b) { return a * b; }
-double div (double a, double b) {
+double divide (double a, double b) {
     if (b == 0) {
         return 0;
     }
@@ -42,6 +42,7 @@ void EvaluationVisitor::visit(BinaryOpNode *node) {
     switch (node->optype()) {
         case BinaryOpNode::ADD: operation = add; break;
         case BinaryOpNode::MULT: operation = mul; break;
+        case BinaryOpNode::DIV: operation = divide; break;
         default: {
             std::cerr << "Not yet implemented." << std::endl;
             break;
