@@ -5,6 +5,28 @@
 #include "interval/Interval.h"
 #include "visitor/EvaluationVisitor.h"
 
+void test_add() {
+    auto visitor = EvaluationVisitor();
+
+    auto left = IntervalNode(Interval(0, 2));
+    auto right = IntervalNode(Interval(1, 2));
+    auto add = BinaryOpNode(BinaryOpNode::ADD, &left, &right);
+
+    add.accept(&visitor);
+    std::cout << add.value().to_string() << std::endl;
+}
+
+void test_mul() {
+    auto visitor = EvaluationVisitor();
+
+    auto left = IntervalNode(Interval(0, 2));
+    auto right = IntervalNode(Interval(-2, 1));
+    auto mul = BinaryOpNode(BinaryOpNode::MULT, &left, &right);
+
+    mul.accept(&visitor);
+    std::cout << mul.value().to_string() << std::endl;
+}
+
 int main() {
     auto visitor = EvaluationVisitor();
     // TODO: ast
@@ -23,12 +45,6 @@ int main() {
     // -- For now, simple approach -- test cases in main.
     //      -- Can rely on prior knowledge to implement test suite for larger projects.
 
-    auto left = IntervalNode(Interval(0, 2));
-    auto right = IntervalNode(Interval(1, 2));
-    auto add = BinaryOpNode(BinaryOpNode::ADD, &left, &right);
-
-    add.accept(&visitor);
-
-    std::cout << add.value().to_string() << std::endl;
+    test_mul();
     return 0;
 }
