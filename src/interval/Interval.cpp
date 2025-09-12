@@ -27,6 +27,18 @@ double Interval::min() const {
 double Interval::max() const {
     return _max;
 }
+
+/*
+ * Helpers
+ */
 std::string Interval::to_string() const {
     return std::to_string(_min) + " " + std::to_string(_max);
 }
+
+/*
+ * Predicates
+ */
+bool Interval::contains(double value) const {
+    return value >= _min && value <= _max;
+}
+

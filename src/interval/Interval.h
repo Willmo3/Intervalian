@@ -18,8 +18,14 @@ public:
      */
     double min() const;
     double max() const;
-
+    /*
+     * Helpers
+     */
     std::string to_string() const;
+    /*
+     * Predicates
+     */
+    bool contains(double value) const;
 
 private:
     double _min;

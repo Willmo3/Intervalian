@@ -16,19 +16,6 @@
 #include "../ast/unaryops/PowNode.h"
 
 /*
- * Atomic computations
- */
-double add(double a, double b) { return a + b; }
-double sub(double a, double b) { return a - b; }
-double mul(double a, double b) { return a * b; }
-double divide (double a, double b) {
-    if (b == 0) {
-        return 0;
-    }
-    return a / b;
-}
-
-/*
  * Compound computations.
  */
 /**
@@ -60,36 +47,69 @@ Interval pow(Interval base, uint32_t exp) {
  */
 EvaluationVisitor::EvaluationVisitor() = default;
 EvaluationVisitor::~EvaluationVisitor() = default;
-
 /*
  * Visit functions
  */
 
 // Binary visitors
 void EvaluationVisitor::visit(BinaryOpNode *node) {
-    std::function<double(double, double)> operation = nullptr;
+    double min, max;
+    const auto a = node->_left->value();
+    const auto b = node->_right->value();
 
     switch (node->optype()) {
-        case BinaryOpNode::ADD: operation = add; break;
-        case BinaryOpNode::SUB: operation = sub; break;
-        case BinaryOpNode::MULT: operation = mul; break;
-        case BinaryOpNode::DIV: operation = divide; break;
+        case BinaryOpNode::ADD: {
+            min = a.min() + b.min();
+            max = a.max() + b.max();
+            break;
+        }
+        case BinaryOpNode::SUB: {
+            min = a.min() - b.max();
+            max = a.max() - b.min();
+            break;
+        }
+        case BinaryOpNode::MULT: {
+            double values[4];
+            values[0] = a.min() * b.min();
+            values[1] = a.max() * b.min();
+            values[2] = a.min() * b.max();
+            values[3] = a.max() * b.max();
+
+            min = *std::ranges::min_element(values, values + 4);
+            max = *std::ranges::max_element(values, values + 4);
+            break;
+        }
+        case BinaryOpNode::DIV: {
+            double values[4];
+
+            if (b.min() != 0) {
+                values[0] = a.min() / b.min();
+                values[1] = a.max() / b.min();
+            } else {
+                // if min = 0, approaching from right -- positive infinitesimal
+                values[0] = a.min() * INFINITY;
+                values[1] = a.max() * INFINITY;
+            }
+            if (b.max() != 0) {
+                values[2] = a.max() / b.max();
+                values[3] = a.min() / b.max();
+            } else {
+                // if max = 0, approaching from left -- negative infinitesimal
+                values[2] = a.min() * INFINITY * -1;
+                values[3] = a.max() * INFINITY * -1;
+            }
+
+            // TODO: account for division with zero within interval.
+
+            min = *std::ranges::min_element(values, values + 4);
+            max = *std::ranges::max_element(values, values + 4);
+            break;
+        }
         default: {
             std::cerr << "Not yet implemented." << std::endl;
             break;
         }
     }
-
-    // Test all combinations of values to find min, max.
-    double values[4];
-    values[0] = operation(node->_left->value().min(), node->_right->value().min());
-    values[1] = operation(node->_left->value().max(), node->_right->value().min());
-    values[2] = operation(node->_left->value().min(), node->_right->value().max());
-    values[3] = operation(node->_left->value().max(), node->_right->value().max());
-
-    double min = *std::ranges::min_element(values, values + 4);
-    double max = *std::ranges::max_element(values, values + 4);
-
     node->_value = Interval(min, max);
 }
 
