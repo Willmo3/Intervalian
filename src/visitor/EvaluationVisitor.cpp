@@ -131,6 +131,7 @@ void EvaluationVisitor::visit(BinaryOpNode *node) {
             exit(1);
         }
     }
+
     node->_value = Interval(min, max);
 }
 
