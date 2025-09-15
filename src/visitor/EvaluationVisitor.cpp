@@ -5,10 +5,10 @@
 #include "EvaluationVisitor.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <functional>
 #include <iostream>
-#include <math.h>
 #include <ostream>
 
 #include "../ast/binaryops/BinaryOpNode.h"
@@ -80,34 +80,55 @@ void EvaluationVisitor::visit(BinaryOpNode *node) {
             break;
         }
         case BinaryOpNode::DIV: {
-            double values[4];
+            std::vector<double> candidate_values;
 
-            if (b.min() != 0) {
-                values[0] = a.min() / b.min();
-                values[1] = a.max() / b.min();
-            } else {
-                // if min = 0, approaching from right -- positive infinitesimal
-                values[0] = a.min() * INFINITY;
-                values[1] = a.max() * INFINITY;
+            // Edge case: [0,0] defines only the value 0 -- not one infinitesimal more.
+            // We return the interval 0, 0 in this case.
+            if (b.min() == b.max() && b.min() == 0) {
+                min = 0;
+                max = 0;
+                break;
             }
-            if (b.max() != 0) {
-                values[2] = a.max() / b.max();
-                values[3] = a.min() / b.max();
-            } else {
+
+            // First, check if 0 in interval.
+            if (b.max() == 0) {
                 // if max = 0, approaching from left -- negative infinitesimal
-                values[2] = a.min() * INFINITY * -1;
-                values[3] = a.max() * INFINITY * -1;
+                // negative / -inf = inf
+                if (a.min() < 0) {
+                    candidate_values.push_back(INFINITY);
+                }
+                // positive / -inf = -inf
+                if (a.max() > 0) {
+                    candidate_values.push_back(-INFINITY);
+                }
+            } else if (b.contains(0)) {
+                // negative / inf = -inf
+                if (a.min() < 0) {
+                    candidate_values.push_back(-INFINITY);
+                }
+                // positive / inf = inf
+                if (a.max() > 0) {
+                    candidate_values.push_back(INFINITY);
+                }
             }
 
-            // TODO: account for division with zero within interval.
+            // We now add the boundaries of a / the boundaries of b to the interval, as with multiplication.
+            // Skip zero boundaries, as we will have already covered this.
+            if (b.min() != 0) {
+                candidate_values.push_back(a.min() / b.min());
+                candidate_values.push_back(a.max() / b.min());
+            } else if (b.max() != 0) {
+                candidate_values.push_back(a.min() / b.max());
+                candidate_values.push_back(a.max() / b.max());
+            }
 
-            min = *std::ranges::min_element(values, values + 4);
-            max = *std::ranges::max_element(values, values + 4);
+            min = *std::ranges::min_element(candidate_values);
+            max = *std::ranges::max_element(candidate_values);
             break;
         }
         default: {
             std::cerr << "Not yet implemented." << std::endl;
-            break;
+            exit(1);
         }
     }
     node->_value = Interval(min, max);

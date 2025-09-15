@@ -43,10 +43,24 @@ void test_mul() {
 void test_div() {
     auto visitor = EvaluationVisitor();
 
-    auto left = IntervalNode(Interval(0, 2));
+    auto left = IntervalNode(Interval(-1, 2));
     auto right = IntervalNode(Interval(-2, 1));
     auto div = BinaryOpNode(BinaryOpNode::DIV, &left, &right);
+    div.accept(&visitor);
+    std::cout << div.value().to_string() << std::endl;
 
+    left = IntervalNode(Interval(0, 2));
+    div = BinaryOpNode(BinaryOpNode::DIV, &left, &right);
+    div.accept(&visitor);
+    std::cout << div.value().to_string() << std::endl;
+
+    left = IntervalNode(Interval(-2, 0));
+    div = BinaryOpNode(BinaryOpNode::DIV, &left, &right);
+    div.accept(&visitor);
+    std::cout << div.value().to_string() << std::endl;
+
+    right = IntervalNode(Interval(0, 0));
+    div = BinaryOpNode(BinaryOpNode::DIV, &left, &right);
     div.accept(&visitor);
     std::cout << div.value().to_string() << std::endl;
 }
