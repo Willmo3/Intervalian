@@ -89,6 +89,6 @@ void test_tanh() {
 int main() {
     auto visitor = EvaluationVisitor();
 
-    test_div();
+    test_pow();
     return 0;
 }

@@ -19,7 +19,7 @@
  * Compound computations.
  */
 /**
- * Take the power of an interval by repeatedly multiplying it by other intervals.
+ * Take the power of an interval.
  *
  * @param base Interval to exponentiate.
  * @param exp Power to raise the interval to.
@@ -31,21 +31,25 @@ Interval pow(Interval base, uint32_t exp) {
         return {1, 1};
     }
 
-    // Start at one because 1st power is identity operation.
-    Interval accumulator = base;
-    for (auto i = 1; i < exp; i++) {
-        double values[4];
-        values[0] = accumulator.min() * base.min();
-        values[1] = accumulator.min() * base.max();
-        values[2] = accumulator.max() * base.min();
-        values[3] = accumulator.max() * base.max();
-
-        double min = *std::ranges::min_element(values, values + 4);
-        double max = *std::ranges::max_element(values, values + 4);
-
-        accumulator = Interval(min, max);
+    // Exponentiation over an odd power is monotonic.
+    if (exp % 2 == 1) {
+        return { std::pow(base.min(), exp), std::pow(base.max(), exp) };
     }
-    return accumulator;
+
+    // Otherwise, even power -- exponentiation is non-monotonic.
+
+    // Start with sound bound for n-1st exponentiation
+    auto odd_subinterval = Interval(std::pow(base.min(), exp - 1), std::pow(base.max(), exp - 1));
+    // Then perform standard interval multiplication.
+    double values[4];
+    values[0] = base.min() * odd_subinterval.min();
+    values[1] = base.max() * odd_subinterval.min();
+    values[2] = base.min() * odd_subinterval.max();
+    values[3] = base.max() * odd_subinterval.max();
+
+    auto min = *std::ranges::min_element(values, values + 4);
+    auto max = *std::ranges::max_element(values, values + 4);
+    return {min, max};
 }
 
 /*
