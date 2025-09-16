@@ -26,8 +26,14 @@
  * @return A new interval, multiplied by itself n times.
  */
 Interval pow(Interval base, uint32_t exp) {
+    // Any value to 0th power == 1.
+    if (exp == 0) {
+        return {1, 1};
+    }
+
+    // Start at one because 1st power is identity operation.
     Interval accumulator = base;
-    for (auto i = 0; i < exp; i++) {
+    for (auto i = 1; i < exp; i++) {
         double values[4];
         values[0] = accumulator.min() * base.min();
         values[1] = accumulator.min() * base.max();
